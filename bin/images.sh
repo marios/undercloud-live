@@ -7,6 +7,9 @@ set -eux
 
 source $HOME/undercloudrc
 
+# Make sure we have the latest $PATH set.
+source /etc/profile.d/tripleo-incubator-scripts.sh
+
 IMAGES_DIR=/opt/stack/images
 CONTROL_IMG=$IMAGES_DIR/overcloud-control.qcow2
 COMPUTE_IMG=$IMAGES_DIR/overcloud-compute.qcow2
