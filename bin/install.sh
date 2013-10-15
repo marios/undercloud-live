@@ -151,4 +151,7 @@ sudo sed -i "s/192.168.122.1/$NETWORK/g" /opt/stack/os-config-applier/templates/
 sudo mv /opt/stack/os-config-refresh/configure.d/50-os-config-applier \
         /opt/stack/os-config-refresh/configure.d/40-os-config-applier
 
+# fix permissions for engine.log
+sudo chown -R heat.heat /var/log/heat/engine.log
+
 touch /opt/stack/undercloud-live/.install
