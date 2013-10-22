@@ -33,6 +33,7 @@ fi
 if [ ! -f $CONTROL_IMG ]; then
     /opt/stack/diskimage-builder/bin/disk-image-create \
         -a amd64 \
+        --min-tmpfs 4 \
         --offline \
         -o $IMAGES_DIR/overcloud-control \
         fedora selinux-permissive boot-stack \
@@ -42,6 +43,7 @@ fi
 if [ ! -f $COMPUTE_IMG ]; then
     /opt/stack/diskimage-builder/bin/disk-image-create \
         -a amd64 \
+        --min-tmpfs 4 \
         --offline \
         -o $IMAGES_DIR/overcloud-compute \
         fedora nova-compute nova-kvm \
