@@ -3,6 +3,7 @@
 set -eux
 
 source /opt/stack/undercloud-live/bin/common.sh
+source /etc/profile.d/virsh.sh
 
 # This script needs to be rerun if you reboot the undercloud.
 
