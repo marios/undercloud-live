@@ -22,8 +22,12 @@ if [[ "Fedora" = $DISTRO ]]; then
         fi
 
         # If the old default rules exist, delete them.
-        iptables -t nat -D PREROUTING -d 169.254.169.254/32 -i br-ctlplane -p tcp -m tcp --dport 80 -j DNAT --to-destination 192.0.2.1:8775 || true
-        iptables -t nat -D PREROUTING -d 192.0.2.1/32 -i br-ctlplane -p tcp -m tcp --dport 8000 -j DNAT --to-destination 192.0.2.1:8000 || true
+        for IP in 169.254.169.254 192.0.2.1; do 
+            export OLD_RULES=$(iptables -t nat -L --line-numbers | grep $IP | awk '{print $1}' | sort -rn)
+            for OLD_RULE in $OLD_RULES; do
+                iptables -t nat -D PREROUTING $OLD_RULE
+            done
+        done
 
         iptables -t nat -I PREROUTING -d 169.254.169.254/32 -i br-ctlplane -p tcp -m tcp --dport 80 -j DNAT --to-destination $CONTROL_IP:8775
         iptables -t nat -I PREROUTING -d 192.0.2.1/32 -i br-ctlplane -p tcp -m tcp --dport 8000 -j DNAT --to-destination $CONTROL_IP:8000
