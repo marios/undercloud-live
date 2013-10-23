@@ -68,6 +68,13 @@ git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/
 popd
 
 git clone https://github.com/agroup/tripleo-puppet-elements
+# Once this change merges upstream, we should merge it to triple-puppet-elements
+# and drop this cherry-pick.
+pushd tripleo-puppet-elements
+git config user.email "undercloud-live@example.com"
+git config user.name "Undercloud Live"
+git fetch https://review.openstack.org/openstack/tripleo-image-elements refs/changes/18/50918/3 && git cherry-pick -x FETCH_HEAD
+popd
 
 git clone https://github.com/openstack/tripleo-heat-templates.git
 pushd tripleo-heat-templates
