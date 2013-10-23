@@ -2,7 +2,11 @@
 set -eux
 
 source /etc/sysconfig/undercloud-live-config || true
-LEAF_IP=${LEAF_IP:-192.0.2.2}
+# With no default value, the route will not get added.  This is what we want to
+# happen because we do not want the route added until
+# /etc/sysconfig/undercloud-live-config has been updated with the $LEAF_IP
+# setting.
+LEAF_IP=${LEAF_IP:-}
 CONTROL_INTERFACE=${CONTROL_INTERFACE:-eth0}
 
 sudo ip route del 192.0.2.0/24 dev $CONTROL_INTERFACE || true

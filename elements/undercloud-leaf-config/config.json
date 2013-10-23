@@ -41,7 +41,7 @@
     "quantum_admin_auth_url":"http://CONTROL_IP:35357/v2.0"
   },
   "bootstack": {
-    "public_interface_ip": "LEAF_IP/24",
+    "public_interface_ip": "LEAF_DNSMASQ_IP/24",
     "masquerade_networks": ["192.0.2.0/24"]
   },
   "neutron": {
