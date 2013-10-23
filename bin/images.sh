@@ -50,7 +50,7 @@ if [ ! -f $COMPUTE_IMG ]; then
         neutron-openvswitch-agent heat-cfntools stackuser pip-cache
 fi
 
-#/opt/stack/undercloud-live/bin/baremetal.sh
-for i in `glance image-list | grep overcloud | cut -d \| -f 2`; do glance image-delete $i; done
+/opt/stack/undercloud-live/bin/baremetal.sh
+
 /opt/stack/tripleo-incubator/scripts/load-image $COMPUTE_IMG
 /opt/stack/tripleo-incubator/scripts/load-image $CONTROL_IMG
