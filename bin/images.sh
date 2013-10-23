@@ -33,7 +33,7 @@ fi
 if [ ! -f $CONTROL_IMG ]; then
     /opt/stack/diskimage-builder/bin/disk-image-create \
         -a amd64 \
-        --min-tmpfs 4 \
+        --min-tmpfs 3 \
         --offline \
         -o $IMAGES_DIR/overcloud-control \
         fedora selinux-permissive boot-stack \
@@ -43,14 +43,14 @@ fi
 if [ ! -f $COMPUTE_IMG ]; then
     /opt/stack/diskimage-builder/bin/disk-image-create \
         -a amd64 \
-        --min-tmpfs 4 \
+        --min-tmpfs 3 \
         --offline \
         -o $IMAGES_DIR/overcloud-compute \
         fedora nova-compute nova-kvm \
         neutron-openvswitch-agent heat-cfntools stackuser pip-cache
 fi
 
-/opt/stack/undercloud-live/bin/baremetal.sh
-
+#/opt/stack/undercloud-live/bin/baremetal.sh
+for i in `glance image-list | grep overcloud | cut -d \| -f 2`; do glance image-delete $i; done
 /opt/stack/tripleo-incubator/scripts/load-image $COMPUTE_IMG
 /opt/stack/tripleo-incubator/scripts/load-image $CONTROL_IMG
