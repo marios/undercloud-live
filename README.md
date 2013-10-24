@@ -192,9 +192,20 @@ specified otherwise.
         export NODE_DISK=20 
         export NODE_ARCH=amd64
 
+1. [HOST] Ensure that openvswitch is started
+
+        sudo service openvswitch start
+
 1. [HOST] Setup the brbm openvswitch bridge and libvirt network.
 
         setup-network
+
+1. [HOST] Export LIBVIRT_DEFAULT_URI to prevent undercloud-live using 
+   qemu:///system.  Check that the default libvirt connection for your user is 
+   qemu:///system. If it is not, set an environment variable to configure the 
+   connection. 
+
+        export LIBVIRT_DEFAULT_URI=${LIBVIRT_DEFAULT_URI:-"qemu:///system"} 
 
 1. [HOST] Create the baremetal nodes.  Specify the path to your undercloud-live 
    checkout as needed.  Save the output of this command, you will need it later.
