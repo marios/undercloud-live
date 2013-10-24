@@ -192,6 +192,10 @@ specified otherwise.
         export NODE_DISK=20 
         export NODE_ARCH=amd64
 
+1. [HOST] Ensure that openvswitch is started
+
+        sudo service openvswitch start
+
 1. [HOST] Setup the brbm openvswitch bridge and libvirt network.
 
         setup-network
