@@ -242,6 +242,12 @@ specified otherwise.
    vm's.  Make sure when they reboot, they boot from disk, not iso.  You can
    login with either stack/stack or root/root.
 
+1. [HOST] Add a route from your host to the 192.0.2.0/24 subnet via the leaf
+   ip.  Update $LEAF_IP for your environment.
+
+        export LEAF_IP=192.168.122.101
+        sudo ip route add 192.0.2.0/24 via $LEAF_IP
+
 1. [CONTROL] Edit /etc/sysconfig/undercloud-live-config and set all
    the defined environment variables in the file.  Rememver to set
    $UNDERCLOUD_MACS based on the output from when nodes.sh was run earlier.  
