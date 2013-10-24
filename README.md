@@ -322,10 +322,39 @@ specified otherwise.
 
         /opt/stack/undercloud-live/bin/deploy-overcloud.sh
 
-1. [CONTROL] To use any of the OpenStack clients, source the undercloudrc file
-   first:
+1. [CONTROL] Source the undercloudrc file so you can interact with OpenStack
+   clients:
 
         source /etc/sysconfig/undercloudrc
+
+1. [CONTROL] Use heat stack-list to check for the overcloud to finish
+   deploying.  It should show CREATE_COMPLETE in the output.
+
+1. [CONTROL] Configure the overcloud.  This performs setup of the overcloud and
+   loads a cirros image into overcloud glance.
+
+        /opt/stack/undercloud-live/bin/configure-overcloud.sh
+
+1. [CONTROL] As an overcloud user, launch a cirros image on the overcloud.
+
+        source /etc/sysconfig/undercloudrc
+        export OVERCLOUD_IP=$(nova list | grep notcompute.*ctlplane | sed  -e "s/.*=\\([0-9.]*\\).*/\1/")
+        source tripleo-overcloud-passwords
+        source /opt/stack/tripleo-incubator/overcloudrc-user
+        nova boot --key-name default --flavor m1.tiny --image user demo
+        # nova list until the instance is ACTIVE
+        nova list
+        PORT=$(neutron port-list -f csv -c id --quote none | tail -n1)
+        neutron floatingip-create ext-net --port-id "${PORT//[[:space:]]/}"
+        # nova list again to see the assigned floating ip
+        nova list
+
+1. [CONTROL] ssh to the instance on the overcloud
+
+        # Use the correct assigned floating ip here
+        # cirros user's password is cubswin:)
+        ssh cirros@192.0.2.46
+
 
 ### Live Image Additional Info
 
