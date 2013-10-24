@@ -36,7 +36,7 @@ if [ ! -f $CONTROL_IMG ]; then
         --min-tmpfs 3 \
         --offline \
         -o $IMAGES_DIR/overcloud-control \
-        fedora selinux-permissive boot-stack horizon \
+        fedora selinux-permissive boot-stack horizon apache2 \
         heat-cfntools neutron-network-node stackuser pip-cache
 fi
 
