@@ -21,9 +21,6 @@ sudo yum install -y busybox
 # which is not installed in minimal Fedora images
 sudo yum install -y which
 
-# Horizon requires mariadb-devel
-sudo yum install -y mariadb-devel
-
 # The packaged version of pbr that gets installed is
 # python-pbr-0.5.19-2.fc19.noarch
 # However, the unpackaged os-*-config expect pbr>=0.5.21, so we need to still
@@ -75,13 +72,6 @@ rm elements/base/finalise.d/52-force-text-mode-console
 popd
 
 git clone https://github.com/agroup/tripleo-puppet-elements
-# Once this change merges upstream, we should merge it to triple-puppet-elements
-# and drop this cherry-pick.
-pushd tripleo-puppet-elements
-git config user.email "undercloud-live@example.com"
-git config user.name "Undercloud Live"
-git fetch https://review.openstack.org/openstack/tripleo-image-elements refs/changes/18/50918/3 && git cherry-pick -x FETCH_HEAD
-popd
 
 git clone https://github.com/openstack/tripleo-heat-templates.git
 pushd tripleo-heat-templates
