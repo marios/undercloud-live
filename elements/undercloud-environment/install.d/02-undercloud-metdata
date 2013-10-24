@@ -22,28 +22,51 @@ OVERCLOUD_LIBVIRT_TYPE=${OVERCLOUD_LIBVIRT_TYPE:-qemu}
 
 cat >> /etc/sysconfig/undercloud-live-config << EOQ
 # Management IP address of Control Node
+# Used by:
+#   -- leaf node to connect to the control node
+#   -- leaf node redirects metadata and heat data requests to $CONTROL_IP
 export CONTROL_IP=$CONTROL_IP
+
 # Control Node management network interface
 # This is most likely the first interface (eth0)
+# Used by:
+#  -- control node adds a route to 192.0.2.0/24 via $CONTROL_INTERFACE and $LEAF_IP
 export CONTROL_INTERFACE=$CONTROL_INTERFACE
 
 # Management IP address of Leaf Node
+# Used by:
+#  -- control node adds a route to 192.0.2.0/24 via $CONTROL_INTERFACE and $LEAF_IP
 export LEAF_IP=$LEAF_IP
+
 # IP address assigned to the br-ctlplane ovs bridge that is bridged to the
 # interface that is used for pxe booting nodes by the leaf.
+# Used by:
+#  -- init-neutron-ovs script on leaf node to assign an IP to br-ctlplanej
 export LEAF_DNSMASQ_IP=$LEAF_DNSMASQ_IP
-# Compute service host name of the Leaf Node
-LEAF_SERVICE_HOST=$LEAF_SERVICE_HOST
+
 # Leaf Node physical network interface for L2 broadcast domain for pxe
 # This is possibly not the management interface, if running everything in vm's,
 # it's most likely the 2nd interface (eth1)
+# Used by:
+#  -- leaf interface that is bridged to br-ctlplane and used for
+#     dnsmasq/dhcp/pxe/tftp
 export LEAF_INTERFACE=$LEAF_INTERFACE
 
+# Compute service host name of the Leaf Node
+# Used by:
+#  -- leaf node setting in nova.conf that identifies the compute host to the
+#     control node
+LEAF_SERVICE_HOST=$LEAF_SERVICE_HOST
+
+# Barmetal node vm's hardware characteristics.  These settings should match
+# what they were when you defined them on the host.
 export NODE_CPU=$NODE_CPU
 export NODE_MEM=$NODE_MEM
 export NODE_DISK=$NODE_DISK
 export NODE_ARCH=$NODE_ARCH
 
+# Mac addresses of baremetal node vm's.  This value was output to the screen
+# when nodes.sh was run on the host.
 export UNDERCLOUD_MACS="$UNDERCLOUD_MACS"
 
 # IP address of host system running libvirt where baremetal nodes are defined
