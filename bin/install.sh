@@ -62,6 +62,16 @@ git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/
 git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/21/52321/3 && git cherry-pick -x FETCH_HEAD
 git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/49/52349/3 && git cherry-pick -x FETCH_HEAD
 git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/38/52538/1 && git cherry-pick -x FETCH_HEAD
+git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/80/45980/1 && git cherry-pick -x FETCH_HEAD
+git cherry-pick -x 50cb156369fb8d3af8de74b25fda69250cb3836c
+git cherry-pick -x 18acacc26afa054d52ea58eb205a4ea15a8907e2
+git cherry-pick -x 0add227af3c2b1f3c925b2da05021858c5ccbf24
+git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/05/48505/1 && git cherry-pick -x FETCH_HEAD
+git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/49/53349/1 && git cherry-pick -x FETCH_HEAD
+# NOTE(bnemec): This is unnecessary for what we're doing, and
+# it breaks image builds with Horizon.  This has been fixed
+# upstream, but for now just remove it.
+rm elements/base/finalise.d/52-force-text-mode-console
 popd
 
 git clone https://github.com/agroup/tripleo-puppet-elements

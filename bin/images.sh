@@ -36,7 +36,7 @@ if [ ! -f $CONTROL_IMG ]; then
         --min-tmpfs 3 \
         --offline \
         -o $IMAGES_DIR/overcloud-control \
-        fedora selinux-permissive boot-stack \
+        fedora selinux-permissive boot-stack horizon apache2 \
         heat-cfntools neutron-network-node stackuser pip-cache
 fi
 
@@ -49,9 +49,6 @@ if [ ! -f $COMPUTE_IMG ]; then
         fedora nova-compute nova-kvm \
         neutron-openvswitch-agent heat-cfntools stackuser pip-cache
 fi
-
-# Delete old overcloud images before we load again.
-for i in `glance image-list | grep overcloud | cut -d \| -f 2`; do glance image-delete $i; done
 
 /opt/stack/tripleo-incubator/scripts/load-image $COMPUTE_IMG
 /opt/stack/tripleo-incubator/scripts/load-image $CONTROL_IMG
