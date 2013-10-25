@@ -61,8 +61,8 @@ fi
 if ! [ -d tripleo-incubator ]; then
     git clone https://github.com/openstack/tripleo-incubator.git
     pushd tripleo-incubator
-    git config user.email "you@example.com"
-    git config user.name "Your Name"
+    git config user.email "undercloud-live@example.com"
+    git config user.name "Undercloud Live"
     # Oct 8 commit 'Switch from ">/dev/stderr" to ">&2"'
     # For the next ones let's use cherry-pick.
     # NOTE(lucasagomes): cherry-pick will require the git
@@ -74,13 +74,23 @@ fi
 if ! [ -d diskimage-builder ]; then
     git clone https://github.com/openstack/diskimage-builder.git
     pushd diskimage-builder
-    git config user.email "you@example.com"
-    git config user.name "Your Name"
+    git config user.email "undercloud-live@example.com"
+    git config user.name "Undercloud Live"
     git checkout 9211a7fecbadc13e8254085133df1e3b53f150d8
     git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/30/46230/1 && git cherry-pick -x FETCH_HEAD
     git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/21/52321/3 && git cherry-pick -x FETCH_HEAD
     git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/49/52349/3 && git cherry-pick -x FETCH_HEAD
     git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/38/52538/1 && git cherry-pick -x FETCH_HEAD
+    git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/80/45980/1 && git cherry-pick -x FETCH_HEAD
+    git cherry-pick -x 50cb156369fb8d3af8de74b25fda69250cb3836c
+    git cherry-pick -x 18acacc26afa054d52ea58eb205a4ea15a8907e2
+    git cherry-pick -x 0add227af3c2b1f3c925b2da05021858c5ccbf24
+    git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/05/48505/1 && git cherry-pick -x FETCH_HEAD
+    git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/49/53349/1 && git cherry-pick -x FETCH_HEAD
+    # NOTE(bnemec): This is unnecessary for what we're doing, and
+    # it breaks image builds with Horizon.  This has been fixed
+    # upstream, but for now just remove it.
+    rm elements/base/finalise.d/52-force-text-mode-console
     popd
 fi
 
@@ -91,8 +101,8 @@ fi
 if ! [ -d tripleo-heat-templates ]; then
     git clone https://github.com/openstack/tripleo-heat-templates.git
     pushd tripleo-heat-templates
-    git config user.email "you@example.com"
-    git config user.name "Your Name"
+    git config user.email "undercloud-live@example.com"
+    git config user.name "Undercloud Live"
     # Sept 18 commit "Add functional tests and examples for merge"
     git reset --hard 0dbf2810a0ee78658c35e61dc447c5f968226cb9
     popd
