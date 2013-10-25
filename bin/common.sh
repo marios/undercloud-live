@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eux
+set -ux
 
 # These functions borrowed from:
 # https://github.com/qwefi/toci/blob/master/toci_functions.sh
@@ -19,5 +19,5 @@ wait_for(){
 }
 
 ssh_noprompt(){
-    ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=QUIET -o PasswordAuthentication=no $@
+    ssh -t -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=QUIET -o PasswordAuthentication=no $@
 }
