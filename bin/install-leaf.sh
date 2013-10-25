@@ -90,7 +90,7 @@ if ! [ -d diskimage-builder ]; then
     # NOTE(bnemec): This is unnecessary for what we're doing, and
     # it breaks image builds with Horizon.  This has been fixed
     # upstream, but for now just remove it.
-    rm elements/base/finalise.d/52-force-text-mode-console
+    rm -f elements/base/finalise.d/52-force-text-mode-console
     popd
 fi
 

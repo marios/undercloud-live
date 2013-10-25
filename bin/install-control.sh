@@ -76,7 +76,7 @@ git fetch https://review.openstack.org/openstack/diskimage-builder refs/changes/
 # NOTE(bnemec): This is unnecessary for what we're doing, and
 # it breaks image builds with Horizon.  This has been fixed
 # upstream, but for now just remove it.
-rm elements/base/finalise.d/52-force-text-mode-console
+rm -f elements/base/finalise.d/52-force-text-mode-console
 popd
 
 git clone https://github.com/agroup/tripleo-puppet-elements
