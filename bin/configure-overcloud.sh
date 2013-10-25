@@ -37,14 +37,5 @@ os-adduser -p $OVERCLOUD_DEMO_PASSWORD demo demo@example.com
 nova flavor-delete m1.tiny
 nova flavor-create m1.tiny 1 512 2 1
 
-curl -L -O https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img
-
-glance image-create \
-    --name user \
-    --public \
-    --disk-format qcow2 \
-    --container-format bare \
-    --file cirros-0.3.0-x86_64-disk.img
-
 source /opt/stack/tripleo-incubator/overcloudrc-user
 user-config

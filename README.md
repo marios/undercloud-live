@@ -154,7 +154,6 @@ it's services:
     export OVERCLOUD_IP=$(nova list | grep notcompute.*ctlplane | sed  -e "s/.*=\\([0-9.]*\\).*/\1/")
     source /opt/stack/tripleo-incubator/overcloudrc
 
-
 A couple of points to remember as the Live CD is used:
 
 1. You can use the Install to Hard Drive shortcut on the desktop to install the
