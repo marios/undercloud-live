@@ -315,6 +315,10 @@ specified otherwise.
         export LEAF_IP=192.168.122.101
         ssh stack@$LEAF_IP "cat /opt/stack/boot-stack/virtual-power-key.pub" >> ~/.ssh/authorized_keys
 
+1. [HOST] Ensure that SSH Daemon has started
+
+        sudo service sshd start
+
 1. [CONTROL] Deploy an Overcloud.  If you're deploying the Overcloud to
    baremetal, first edit deploy-overcloud.sh and update $OVERCLOUD_LIBVIRT_TYPE
    to "kvm" instead.  This script writes out the tripleo-overcloud-passwords
