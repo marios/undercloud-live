@@ -345,7 +345,7 @@ specified otherwise.
         source /etc/sysconfig/undercloudrc
         export OVERCLOUD_IP=$(nova list | grep notcompute.*ctlplane | sed  -e "s/.*=\\([0-9.]*\\).*/\1/")
         source tripleo-overcloud-passwords
-        source /opt/stack/tripleo-incubator/overcloudrc-user
+        source /opt/stack/tripleo-incubator/overcloudrc
         curl -L -O https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img
         glance image-create \
             --name user \
@@ -353,6 +353,7 @@ specified otherwise.
             --disk-format qcow2 \
             --container-format bare \
             --file cirros-0.3.0-x86_64-disk.img
+        source /opt/stack/tripleo-incubator/overcloudrc-user
         nova boot --key-name default --flavor m1.tiny --image user demo
         # nova list until the instance is ACTIVE
         nova list
