@@ -314,6 +314,7 @@ specified otherwise.
 
         export LEAF_IP=192.168.122.101
         ssh stack@$LEAF_IP "cat /opt/stack/boot-stack/virtual-power-key.pub" >> ~/.ssh/authorized_keys
+        chmod 0600 ~/.ssh/authorized_keys
 
 1. [HOST] Ensure that SSH Daemon has started
 
