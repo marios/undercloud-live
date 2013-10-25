@@ -346,6 +346,13 @@ specified otherwise.
         export OVERCLOUD_IP=$(nova list | grep notcompute.*ctlplane | sed  -e "s/.*=\\([0-9.]*\\).*/\1/")
         source tripleo-overcloud-passwords
         source /opt/stack/tripleo-incubator/overcloudrc-user
+        curl -L -O https://launchpad.net/cirros/trunk/0.3.0/+download/cirros-0.3.0-x86_64-disk.img
+        glance image-create \
+            --name user \
+            --public \
+            --disk-format qcow2 \
+            --container-format bare \
+            --file cirros-0.3.0-x86_64-disk.img
         nova boot --key-name default --flavor m1.tiny --image user demo
         # nova list until the instance is ACTIVE
         nova list
