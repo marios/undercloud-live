@@ -256,5 +256,112 @@ specified otherwise.
         # cirros user's password is cubswin:)
         ssh cirros@192.0.2.46
 
+### Adding additional Leaf Nodes
+
+You can add additional Leaf Nodes to handle provisioning baremetal nodes in
+other subnets/vlans.  There is some manual configuration required however.
+These steps show adding a leaf node for a new 192.0.3.0/24 subnet.
+
+1. [HOST] Create a new ovs bridge for the new network for the leaf node.
+
+        sudo ovs-vsctl add-br brbm-2
+
+1. [HOST] Create a libvirt network for the bridge.
+
+        cd $TRIPLEO_ROOT/tripleo-incubator/templates
+        cp brbm.xml brbm-2.xml
+        sed -i 's/brbm/brbm-2/g' brbm-2.xml
+        virsh net-define brbm-2.xml
+
+1. [HOST] Create a new vm template for the additional leaf node.
+
+        cd $TRIPLEO_ROOT/undercloud-live/templates
+        cp ucl-leaf-live.xml ucl-leaf-live-2.xml
+
+1. [HOST] Edit ucl-leaf-live-2.xml and make the following changes:
+    1. Change the vm name to ucl-leaf-live-2
+    1. Change the disk name to ucl-leaf-live-2.qcow2, and don't forget to
+       create the disk as well.
+    1. Delete the mac address line for the default network
+    1. Change the brbm network name to brbm-2
+    1. Delete the mac address line for the brbm-2 network.
+
+1. [HOST] Define a vm for the additional leaf node.
+
+        virsh define ucl-leaf-live-2.xml
+
+1. [HOST] Boot the ucl-leaf-live-2 vm from the leaf live iso image.
+
+1. [LEAF] Install the images to disk.
+   There is a kickstart file included on the images to make this easier.
+   However, before using the kickstart file, first make sure that a network
+   configuration script exists for every network interface (this might be
+   a Fedora bug).  Here are some example commands that copy network scripts for 
+   a system with 1 interface, and a system with 2 interfaces
+
+        # System with 2 interfaces, ens3 and ens6
+        sudo cp /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-ens3
+        sudo cp /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-ens6
+   
+1. [LEAF] Make any needed changes to the kickstart file and then run
+   (This should be run as liveuser, not root):
+
+        liveinst --kickstart /opt/stack/undercloud-live/kickstart/anaconda-ks.cfg
+
+1. [LEAF] Once the install has finished, reboot the control and leaf
+   vm's.  Make sure when they reboot, they boot from disk, not iso.  You can
+   login with either stack/stack or root/root.
+
+1. [HOST] Add a route from your host to the 192.0.3.0/24 subnet (or whatever
+   subnet you're using) via the leaf
+   ip.  Update $LEAF_IP for your environment.
+
+        export LEAF_IP=192.168.122.102
+        sudo ip route add 192.0.3.0/24 via $LEAF_IP
+
+1. [CONTROL] Add a route from the undercloud control node to the new subnet via
+   the new leaf node's IP.
+
+        export LEAF_IP=192.168.122.102
+        sudo ip route add 192.0.3.0/24 via $LEAF_IP
+
+1. [LEAF] Edit /opt/stack/os-config-refresh/pre-configure.d/97-fedora-iptables
+   and add the following line *before* the call to iptables-save:
+
+        iptables -I FORWARD -d 192.0.3.0/24 -j ACCEPT
+
+1. [LEAF] Delete the OK file for 97-fedora-iptables so the rules get applied
+   again.
+
+        sudo rm -f /opt/stack/boot-stack/fedora-iptables.ok
+        
+1. [LEAF] Edit /etc/sysconfig/undercloud-live-config and set all
+   the defined environment variables in the file.  
+   Refer to
+   https://github.com/agroup/undercloud-live/blob/slagle/package/elements/undercloud-environment/install.d/02-undercloud-metdata
+   for documentation of the environment variables (documentation was added to
+   the file directly in a later commit).
+   
+   When setting LEAF_DNSMASQ_IP, use 192.0.3.1, or whatever corresponds to the
+   subnet you're setting up the leaf node for.
+
+   When setting LEAF_SERVICE_HOST, use undercloud-leaf-2, or a different unique
+   value among the leaf nodes.
+
+   Once edited,  run undercloud-metadata
+   on the control node to refresh the configuration.
+
+        sudo undercloud-metadata
+
+   Use the command in the output from undercloud-metadata to watch/tail the log
+   of os-collect-config.  Make sure it runs successfully once.  You'll be able
+   to tell when you see "Completed phase post-configure" in the log.
+
+1. [CONTROL] Add a new subnet for 192.0.3.0/24 to the ctlplane network
+
+        source /etc/sysconfig/undercloudrc
+        TENANT_ID=$(keystone tenant-list | grep ' admin ' | awk '{print $2}')
+        neutron subnet-create --tenant-id $TENANT_ID ctlplane 192.0.3.0/24
+        
 
 # References
