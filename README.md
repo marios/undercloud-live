@@ -357,6 +357,18 @@ These steps show adding a leaf node for a new 192.0.3.0/24 subnet.
    of os-collect-config.  Make sure it runs successfully once.  You'll be able
    to tell when you see "Completed phase post-configure" in the log.
 
+1. [LEAF] Edit /lib/systemd/system/nova-bm-dnsmasq.service and update the dhcp
+   range in the call to dnsmasq from 192.0.2.xxx to 192.0.3.xxx.  The updated
+   call to dnsmasq would look something like:
+
+        ExecStart=/sbin/dnsmasq --conf-file= --port=0 --enable-tftp --tftp-root=/tftpboot --dhcp-boot=pxelinux.0 \
+                        --pid-file=/var/run/dnsmasq.pid --interface=br-ctlplane --dhcp-range=192.0.3.65,192.0.3.69,29
+
+1. [LEAF] Restart the nova-bm-dnsmasq service.
+
+        sudo systemctl restart nova-bm-dnsmasq
+
+
 1. [CONTROL] Add a new subnet for 192.0.3.0/24 to the ctlplane network
 
         source /etc/sysconfig/undercloudrc
