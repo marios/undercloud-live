@@ -381,5 +381,12 @@ These steps show adding a leaf node for a new 192.0.3.0/24 subnet.
         ssh stack@$LEAF_IP "cat /opt/stack/boot-stack/virtual-power-key.pub" >> ~/.ssh/authorized_keys
         chmod 0600 ~/.ssh/authorized_keys
 
+1. [CONTROL] You can add baremetal nodes associated with this new leaf node
+   using the nova command directly from the undercloud control node.
+
+        source /etc/sysconfig/undercloudrc
+        # undercloud-leaf-2 is the value of LEAF_SERVICE_HOST
+        nova baremetal-node-create undercloud-leaf-2 1 2048 20 52:54:00:4e:76:e1
+
 
 # References
