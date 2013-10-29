@@ -368,12 +368,18 @@ These steps show adding a leaf node for a new 192.0.3.0/24 subnet.
 
         sudo systemctl restart nova-bm-dnsmasq
 
-
 1. [CONTROL] Add a new subnet for 192.0.3.0/24 to the ctlplane network
 
         source /etc/sysconfig/undercloudrc
         TENANT_ID=$(keystone tenant-list | grep ' admin ' | awk '{print $2}')
         neutron subnet-create --tenant-id $TENANT_ID ctlplane 192.0.3.0/24
-        
+
+1. [HOST] Add the configured virtual power host key to ~/.ssh/authorized_keys
+   on the host.  Define $LEAF_IP as needed for your environment.
+
+        export LEAF_IP=192.168.122.102
+        ssh stack@$LEAF_IP "cat /opt/stack/boot-stack/virtual-power-key.pub" >> ~/.ssh/authorized_keys
+        chmod 0600 ~/.ssh/authorized_keys
+
 
 # References
