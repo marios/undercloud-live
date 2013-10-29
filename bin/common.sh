@@ -12,7 +12,13 @@ wait_for(){
     i=0
     while [ $i -lt $LOOPS ] ; do
         i=$((i + 1))
-        eval "$@" && return 0 || true
+        set +e
+        $@
+        rc=$?
+        set -e
+        if [ $rc -eq 0 ]; then
+            return 0
+        fi
         sleep $SLEEPTIME
     done
     return 1
