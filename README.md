@@ -223,6 +223,12 @@ specified otherwise.
 1. [CONTROL] Use heat stack-list to check for the overcloud to finish
    deploying.  It should show CREATE_COMPLETE in the output.
 
+1. [CONTROL] Pull latest undercloud-live.
+
+        cd /opt/stack/undercloud-live
+        sudo git pull
+        cd
+
 1. [CONTROL] Configure the overcloud.  This performs setup of the overcloud and
    loads a cirros image into overcloud glance.
 
