@@ -6,6 +6,7 @@
   <os>
     <type arch='x86_64' machine='pc-1.2'>hvm</type>
     <boot dev='hd'/>
+    <boot dev='cdrom'/>
     <bootmenu enable='yes'/>
   </os>
   <features>
