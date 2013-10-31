@@ -75,7 +75,7 @@ specified otherwise.
 
 1. [HOST] Install necessary packages
 
-	install-dependencies
+        install-dependencies
 
 1. [HOST] Define environment variables for the baremetal nodes.
 
