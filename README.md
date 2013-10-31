@@ -105,6 +105,42 @@ specified otherwise.
    undercloud-live checkout in the templates directory to *help* with this.
    Review the templates and make any changes you'd like (to increate ram, etc).
    
+   One change you may want to make is to add the HOST IP address to the graphics
+   definition in each vm. This way you can use a spice client to connect and run
+   the installation:
+
+        <graphics type='spice' autoport='yes' listen='10.0.1.25'/>
+
+   Once the vms are up (next steps) you'll be able to use a spice client 
+   to connect. You need to first discover the port spice is listening on for
+   each vm 
+
+   [NOTE this port is only assigned/available *after* the vm has been started]:
+
+        [HOST]
+        virsh dumpxml ucl-control-live
+        [root@hostname]# virsh dumpxml ucl-control-live
+        ... 
+        <graphics type='spice' port='5900' 
+        ...
+
+        [yourlaptop]
+        yum install spice-gtk-tools-0.18-2.fc18.x86_64
+        spicy -h 10.0.1.25 -p 5900
+
+   Repeat the above for ucl-leaf-live.
+
+   Finally note: if you *are* using the above templates, you will note they are
+   expecting the Fedora-Undercloud-Control.iso and Fedora-Undercloud-Leaf.iso
+   images to be in /var/lib/libvirt/images so make sure you move them there 
+   after download and rename or edit the path accordingly. Furthermore, 
+   the templates also reference two qcow disk images you will need to create: 
+        
+        cd /var/lib/libvirt/images
+        qemu-img create -f qcow2 ucl-leaf-live.qcow2 40G
+        qemu-img create -f qcow2 ucl-control-live.qcow2 40G
+        cd $TRIPLEO_ROOT
+
 1. [HOST] Before starting the vm for the leaf node, edit it's libvirt xml and
    add the following as an additional network interface (this is already added
    in the templates above, so if you used those, you don't need to do this
@@ -116,7 +152,12 @@ specified otherwise.
         </interface>
 
 1. [HOST] Boot the vm's for the control and leaf nodes from their respective
-   iso images.
+   iso images. If you are using the templates from above:
+
+        virsh define undercloud-live/templates/ucl-control-live.xml
+        virsh define undercloud-live/templates/ucl-leaf-live.xml
+        virsh start ucl-control-live
+        virsh start ucl-leaf-live
 
 1. [CONTROL],[LEAF] Install the images to disk.
    There is a kickstart file included on the images to make this easier.
@@ -148,14 +189,31 @@ specified otherwise.
         sudo ip route add 192.0.2.0/24 via $LEAF_IP
 
 1. [CONTROL] Edit /etc/sysconfig/undercloud-live-config and set all
-   the defined environment variables in the file.  Rememver to set
+   the defined environment variables in the file.  Remember to set
    $UNDERCLOUD_MACS based on the output from when nodes.sh was run earlier.  
    Refer to
    https://github.com/agroup/undercloud-live/blob/slagle/package/elements/undercloud-environment/install.d/02-undercloud-metdata
    for documentation of the environment variables (documentation was added to
    the file directly in a later commit).
+
+        NOTE: The following may not be obvious variables in 
+        the config file:
+
+        #this is the second interface on the leaf node, ens6
+        export LEAF_INTERFACE=ens6
+
+        #set libvirt user according to what you used on HOST:
+        export LIBVIRT_USER=root
+
+        #the LIBVIRT Host IP will be the IP for virbr0 on HOST, not the
+        #'main' host address:
+        export LIBVIRT_HOST=192.168.122.1
+
+        The rest should be self explanatory, if not shout!
+
    Once edited,  run undercloud-metadata
    on the control node to refresh the configuration.
+
 
         sudo undercloud-metadata
 
@@ -171,6 +229,9 @@ specified otherwise.
    the file directly in a later commit).
    Once edited,  run undercloud-metadata
    on the control node to refresh the configuration.
+
+   MAKE SURE you set the variables correctly, as mentioned in the previous
+   step for CONTROL.
 
         sudo undercloud-metadata
 
