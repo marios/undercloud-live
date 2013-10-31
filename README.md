@@ -73,6 +73,10 @@ specified otherwise.
 
         export PATH=$TRIPLEO_ROOT/tripleo-incubator/scripts:$PATH
 
+1. [HOST] Install necessary packages
+
+	install-dependencies
+
 1. [HOST] Define environment variables for the baremetal nodes.
 
         export NODE_CPU=1
