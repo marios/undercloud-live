@@ -1,7 +1,7 @@
 # undercloud-live
 
 Tools and scripts to build an undercloud Live CD and/or configure an already
-running Fedora 19 x86_64 system into an undercloud.  
+running Fedora 19 x86_64 system into an undercloud.
 
 To get started, clone this repo to your home directory:
 
@@ -81,7 +81,7 @@ specified otherwise.
 
         export NODE_CPU=1
         export NODE_MEM=2048
-        export NODE_DISK=20 
+        export NODE_DISK=20
         export NODE_ARCH=amd64
 
 1. [HOST] Ensure that openvswitch is started
@@ -92,14 +92,21 @@ specified otherwise.
 
         setup-network
 
-1. [HOST] Export LIBVIRT_DEFAULT_URI to prevent undercloud-live using 
-   qemu:///system.  Check that the default libvirt connection for your user is 
-   qemu:///system. If it is not, set an environment variable to configure the 
-   connection. 
+1. [HOST] Export LIBVIRT_DEFAULT_URI to prevent undercloud-live using
+   qemu:///system.  Check that the default libvirt connection for your user is
+   qemu:///system. If it is not, set an environment variable to configure the
+   connection.
 
-        export LIBVIRT_DEFAULT_URI=${LIBVIRT_DEFAULT_URI:-"qemu:///system"} 
+        export LIBVIRT_DEFAULT_URI=${LIBVIRT_DEFAULT_URI:-"qemu:///system"}
 
-1. [HOST] Create the baremetal nodes.  Specify the path to your undercloud-live 
+1. [HOST] If you needed to set LIBVIRT_DEFAULT_URI in the previous step, create
+   a profile script to ensure the environment variable gets set in future
+   sessions.  This is needed to ensure the virtual power manager can find
+   the baremetal instances created on the host.
+
+        sudo su -c "echo export LIBVIRT_DEFAULT_URI=qemu:///system > /etc/profile.d/virsh.sh"
+
+1. [HOST] Create the baremetal nodes.  Specify the path to your undercloud-live
    checkout as needed.  Save the output of this command, you will need it later.
 
         undercloud-live/bin/nodes.sh
@@ -108,24 +115,24 @@ specified otherwise.
    are libvirt templates called ucl-control-live and ucl-leaf-live in the
    undercloud-live checkout in the templates directory to *help* with this.
    Review the templates and make any changes you'd like (to increate ram, etc).
-   
+
    One change you may want to make is to add the HOST IP address to the graphics
    definition in each vm. This way you can use a spice client to connect and run
    the installation:
 
         <graphics type='spice' autoport='yes' listen='10.0.1.25'/>
 
-   Once the vms are up (next steps) you'll be able to use a spice client 
+   Once the vms are up (next steps) you'll be able to use a spice client
    to connect. You need to first discover the port spice is listening on for
-   each vm 
+   each vm
 
    [NOTE this port is only assigned/available *after* the vm has been started]:
 
         [HOST]
         virsh dumpxml ucl-control-live
         [root@hostname]# virsh dumpxml ucl-control-live
-        ... 
-        <graphics type='spice' port='5900' 
+        ...
+        <graphics type='spice' port='5900'
         ...
 
         [yourlaptop]
@@ -136,10 +143,10 @@ specified otherwise.
 
    Finally note: if you *are* using the above templates, you will note they are
    expecting the Fedora-Undercloud-Control.iso and Fedora-Undercloud-Leaf.iso
-   images to be in /var/lib/libvirt/images so make sure you move them there 
-   after download and rename or edit the path accordingly. Furthermore, 
-   the templates also reference two qcow disk images you will need to create: 
-        
+   images to be in /var/lib/libvirt/images so make sure you move them there
+   after download and rename or edit the path accordingly. Furthermore,
+   the templates also reference two qcow disk images you will need to create:
+
         cd /var/lib/libvirt/images
         qemu-img create -f qcow2 ucl-leaf-live.qcow2 40G
         qemu-img create -f qcow2 ucl-control-live.qcow2 40G
@@ -167,7 +174,7 @@ specified otherwise.
    There is a kickstart file included on the images to make this easier.
    However, before using the kickstart file, first make sure that a network
    configuration script exists for every network interface (this might be
-   a Fedora bug).  Here are some example commands that copy network scripts for 
+   a Fedora bug).  Here are some example commands that copy network scripts for
    a system with 1 interface, and a system with 2 interfaces
 
         # System with 1 interface called ens3
@@ -176,7 +183,7 @@ specified otherwise.
         # System with 2 interfaces, ens3 and ens6
         sudo cp /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-ens3
         sudo cp /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-ens6
-   
+
 1. [CONTROL],[LEAF] Make any needed changes to the kickstart file and then run
    (This should be run as liveuser, not root):
 
@@ -194,13 +201,13 @@ specified otherwise.
 
 1. [CONTROL] Edit /etc/sysconfig/undercloud-live-config and set all
    the defined environment variables in the file.  Remember to set
-   $UNDERCLOUD_MACS based on the output from when nodes.sh was run earlier.  
+   $UNDERCLOUD_MACS based on the output from when nodes.sh was run earlier.
    Refer to
    https://github.com/agroup/undercloud-live/blob/slagle/package/elements/undercloud-environment/install.d/02-undercloud-metdata
    for documentation of the environment variables (documentation was added to
    the file directly in a later commit).
 
-        NOTE: The following may not be obvious variables in 
+        NOTE: The following may not be obvious variables in
         the config file:
 
         #this is the second interface on the leaf node, ens6
@@ -226,7 +233,7 @@ specified otherwise.
    to tell when you see "Completed phase post-configure" in the log.
 
 1. [LEAF] Edit /etc/sysconfig/undercloud-live-config and set all
-   the defined environment variables in the file.  
+   the defined environment variables in the file.
    Refer to
    https://github.com/agroup/undercloud-live/blob/slagle/package/elements/undercloud-environment/install.d/02-undercloud-metdata
    for documentation of the environment variables (documentation was added to
@@ -246,7 +253,7 @@ specified otherwise.
 1. Copy over images, or build them on the control node for the deploy kernel
    and overcloud images.  If you don't provide the images, the next step will
    attempt to create them for you.  You will need the following images to exist
-   on the control node.  
+   on the control node.
 
         /opt/stack/images/overcloud-control.qcow2
         /opt/stack/images/overcloud-compute.qcow2
@@ -367,13 +374,13 @@ These steps show adding a leaf node for a new 192.0.3.0/24 subnet.
    There is a kickstart file included on the images to make this easier.
    However, before using the kickstart file, first make sure that a network
    configuration script exists for every network interface (this might be
-   a Fedora bug).  Here are some example commands that copy network scripts for 
+   a Fedora bug).  Here are some example commands that copy network scripts for
    a system with 1 interface, and a system with 2 interfaces
 
         # System with 2 interfaces, ens3 and ens6
         sudo cp /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-ens3
         sudo cp /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-ens6
-   
+
 1. [LEAF] Make any needed changes to the kickstart file and then run
    (This should be run as liveuser, not root):
 
@@ -405,14 +412,14 @@ These steps show adding a leaf node for a new 192.0.3.0/24 subnet.
    again.
 
         sudo rm -f /opt/stack/boot-stack/fedora-iptables.ok
-        
+
 1. [LEAF] Edit /etc/sysconfig/undercloud-live-config and set all
-   the defined environment variables in the file.  
+   the defined environment variables in the file.
    Refer to
    https://github.com/agroup/undercloud-live/blob/slagle/package/elements/undercloud-environment/install.d/02-undercloud-metdata
    for documentation of the environment variables (documentation was added to
    the file directly in a later commit).
-   
+
    When setting LEAF_DNSMASQ_IP, use 192.0.3.1, or whatever corresponds to the
    subnet you're setting up the leaf node for.
 
